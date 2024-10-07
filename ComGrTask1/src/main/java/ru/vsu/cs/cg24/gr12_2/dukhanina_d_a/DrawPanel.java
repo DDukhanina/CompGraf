@@ -57,6 +57,23 @@ public class DrawPanel extends JPanel {
     }
 
     @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        g.setColor(Color.BLUE);
+        for (SkyLanterns s : skyLanterns){
+            s.setY(s.getY() - 1);
+        }
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        repaint();
+    }
+
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
         background.Draw((Graphics2D) g);
