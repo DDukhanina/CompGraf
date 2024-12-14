@@ -1,54 +1,84 @@
 package org.example;
 
-import ru.cs.vsu.cg2024.matrix.typesMatrix.Matrix4D;
+import org.example.math.Matrix4X4;
 
 public class AffineTransformations {
-    private Matrix4D transformationMatrix;
+    private Matrix4X4 transformationMatrix;
 
-    public AffineTransformations() {
-        this.transformationMatrix = new Matrix4D(new double[][]{
-                {1, 1, 1, 1},
-                {1, 1, 1, 1},
-                {1, 1, 1, 1},
-                {1, 1, 1, 1}
-        });
+    private AffineTransformations() {
+        this.transformationMatrix = Matrix4X4.one();
     }
 
-    public Matrix4D scale(double sX, double sY, double sZ) {
-        Matrix4D scaleMatrix = new Matrix4D(new double[][]{
+    public static AffineTransformations create() {
+        return new AffineTransformations();
+    }
+
+    public AffineTransformations scale(double sX, double sY, double sZ) {
+        Matrix4X4 scaleMatrix = new Matrix4X4(new double[][]{
                 {sX, 0, 0, 0},
                 {0, sY, 0, 0},
                 {0, 0, sZ, 0},
                 {0, 0, 0, 1}
         });
-        return scaleMatrix;
+        this.transformationMatrix = this.transformationMatrix.mul(scaleMatrix);
+        return this;
     }
 
-    public Matrix4D rotate(double rX, double rY, double rZ) {
+    public AffineTransformations rotateX(double rX) {
         double cosX = Math.cos(rX);
         double sinX = Math.sin(rX);
+
+        Matrix4X4 rotationMatrix = new Matrix4X4(new double[][]{
+                {1, 0, 0, 0},
+                {0, cosX, sinX, 0},
+                {0, -sinX, cosX, 0},
+                {0, 0, 0, 1}
+        });
+        this.transformationMatrix = this.transformationMatrix.mul(rotationMatrix);
+        return this;
+    }
+
+    public AffineTransformations rotateY(double rY) {
         double cosY = Math.cos(rY);
         double sinY = Math.sin(rY);
+
+        Matrix4X4 rotationMatrix = new Matrix4X4(new double[][]{
+                {cosY, 0, sinY, 0},
+                {0, 1, 0, 0},
+                {-sinY, 0, cosY, 0},
+                {0, 0, 0, 1}
+        });
+        this.transformationMatrix = this.transformationMatrix.mul(rotationMatrix);
+        return this;
+    }
+
+    public AffineTransformations rotateZ(double rZ) {
         double cosZ = Math.cos(rZ);
         double sinZ = Math.sin(rZ);
 
-        Matrix4D rotationMatrix = new Matrix4D(new double[][]{
-                {cosZ * cosY, cosX * sinZ - sinX * sinY * cosZ, sinX * sinZ + cosX * sinY * cosZ, 0},
-                {-sinZ * cosY, cosX * cosZ + sinX * sinY * sinZ, sinX * cosZ - cosX * sinY * sinZ, 0},
-                {-sinY, -sinX * cosY, cosX * cosY, 0},
+        Matrix4X4 rotationMatrix = new Matrix4X4(new double[][]{
+                {cosZ, sinZ, 0, 0},
+                {-sinZ, cosZ, 0, 0},
+                {0, 0, 1, 0},
                 {0, 0, 0, 1}
         });
-        return rotationMatrix;
+        this.transformationMatrix = this.transformationMatrix.mul(rotationMatrix);
+        return this;
     }
 
-    public Matrix4D translate(double tX, double tY, double tZ) {
-        Matrix4D translationMatrix = new Matrix4D(new double[][]{
+    public AffineTransformations translate(double tX, double tY, double tZ) {
+        Matrix4X4 translationMatrix = new Matrix4X4(new double[][]{
                 {1, 0, 0, tX},
                 {0, 1, 0, tY},
                 {0, 0, 1, tZ},
                 {0, 0, 0, 1}
         });
 
-        return translationMatrix;
+        this.transformationMatrix = this.transformationMatrix.mul(translationMatrix);
+        return this;
+    }
+
+    public Matrix4X4 build() {
+        return this.transformationMatrix;
     }
 }
